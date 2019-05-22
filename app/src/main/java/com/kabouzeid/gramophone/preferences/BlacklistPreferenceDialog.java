@@ -2,8 +2,8 @@ package com.kabouzeid.gramophone.preferences;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import android.text.Html;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -13,14 +13,14 @@ import com.kabouzeid.gramophone.provider.BlacklistStore;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
  */
 public class BlacklistPreferenceDialog extends DialogFragment implements BlacklistFolderChooserDialog.FolderCallback {
-    public static final String TAG = BlacklistPreferenceDialog.class.getSimpleName();
 
-    private ArrayList<String> paths;
+    private List<String> paths;
 
     public static BlacklistPreferenceDialog newInstance() {
         return new BlacklistPreferenceDialog();

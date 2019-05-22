@@ -3,13 +3,16 @@ package com.kabouzeid.gramophone.util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import com.kabouzeid.gramophone.R;
 import com.kabouzeid.gramophone.helper.SortOrder;
 import com.kabouzeid.gramophone.model.CategoryInfo;
@@ -19,6 +22,7 @@ import com.kabouzeid.gramophone.ui.fragments.player.NowPlayingScreen;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 public final class PreferenceUtil {
     public static final String GENERAL_THEME = "general_theme";
@@ -66,6 +70,7 @@ public final class PreferenceUtil {
 
     public static final String LAST_SLEEP_TIMER_VALUE = "last_sleep_timer_value";
     public static final String NEXT_SLEEP_TIMER_ELAPSED_REALTIME = "next_sleep_timer_elapsed_real_time";
+    public static final String SLEEP_TIMER_FINISH_SONG = "sleep_timer_finish_music";
 
     public static final String IGNORE_MEDIA_STORE_ARTWORK = "ignore_media_store_artwork";
 
@@ -97,6 +102,20 @@ public final class PreferenceUtil {
             sInstance = new PreferenceUtil(context.getApplicationContext());
         }
         return sInstance;
+    }
+
+    public static boolean isAllowedToDownloadMetadata(final Context context) {
+        switch (getInstance(context).autoDownloadImagesPolicy()) {
+            case "always":
+                return true;
+            case "only_wifi":
+                final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
+                return netInfo != null && netInfo.getType() == ConnectivityManager.TYPE_WIFI && netInfo.isConnectedOrConnecting();
+            case "never":
+            default:
+                return false;
+        }
     }
 
     public void registerOnSharedPreferenceChangedListener(SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener) {
@@ -279,6 +298,10 @@ public final class PreferenceUtil {
                 interval = calendarUtil.getElapsedWeek();
                 break;
 
+             case "past_seven_days":
+                interval = calendarUtil.getElapsedDays(7);
+                break;
+
             case "past_three_months":
                 interval = calendarUtil.getElapsedMonths(3);
                 break;
@@ -313,6 +336,16 @@ public final class PreferenceUtil {
     public void setNextSleepTimerElapsedRealtime(final long value) {
         final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putLong(NEXT_SLEEP_TIMER_ELAPSED_REALTIME, value);
+        editor.apply();
+    }
+
+    public boolean getSleepTimerFinishMusic() {
+        return mPreferences.getBoolean(SLEEP_TIMER_FINISH_SONG, false);
+    }
+
+    public void setSleepTimerFinishMusic(final boolean value) {
+        final SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putBoolean(SLEEP_TIMER_FINISH_SONG, value);
         editor.apply();
     }
 
@@ -466,9 +499,9 @@ public final class PreferenceUtil {
         return mPreferences.getBoolean(INITIALIZED_BLACKLIST, false);
     }
 
-    public void setLibraryCategoryInfos(ArrayList<CategoryInfo> categories) {
+    public void setLibraryCategoryInfos(List<CategoryInfo> categories) {
         Gson gson = new Gson();
-        Type collectionType = new TypeToken<ArrayList<CategoryInfo>>() {
+        Type collectionType = new TypeToken<List<CategoryInfo>>() {
         }.getType();
 
         final SharedPreferences.Editor editor = mPreferences.edit();
@@ -476,11 +509,11 @@ public final class PreferenceUtil {
         editor.apply();
     }
 
-    public ArrayList<CategoryInfo> getLibraryCategoryInfos() {
+    public List<CategoryInfo> getLibraryCategoryInfos() {
         String data = mPreferences.getString(LIBRARY_CATEGORIES, null);
         if (data != null) {
             Gson gson = new Gson();
-            Type collectionType = new TypeToken<ArrayList<CategoryInfo>>() {
+            Type collectionType = new TypeToken<List<CategoryInfo>>() {
             }.getType();
 
             try {
@@ -493,8 +526,8 @@ public final class PreferenceUtil {
         return getDefaultLibraryCategoryInfos();
     }
 
-    public ArrayList<CategoryInfo> getDefaultLibraryCategoryInfos() {
-        ArrayList<CategoryInfo> defaultCategoryInfos = new ArrayList<>(5);
+    public List<CategoryInfo> getDefaultLibraryCategoryInfos() {
+        List<CategoryInfo> defaultCategoryInfos = new ArrayList<>(5);
         defaultCategoryInfos.add(new CategoryInfo(CategoryInfo.Category.SONGS, true));
         defaultCategoryInfos.add(new CategoryInfo(CategoryInfo.Category.ALBUMS, true));
         defaultCategoryInfos.add(new CategoryInfo(CategoryInfo.Category.ARTISTS, true));

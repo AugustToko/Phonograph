@@ -3,7 +3,7 @@ package com.kabouzeid.gramophone.ui.activities.base;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 import android.view.View;
 
 import com.kabouzeid.appthemehelper.ATH;
@@ -28,7 +28,7 @@ public abstract class AbsThemeActivity extends ATHToolbarActivity {
         MaterialDialogsUtil.updateMaterialDialogsThemeSingleton(this);
     }
 
-    protected void setDrawUnderStatusbar(boolean drawUnderStatusbar) {
+    protected void setDrawUnderStatusbar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             Util.setAllowDrawUnderStatusBar(getWindow());
         else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)

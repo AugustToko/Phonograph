@@ -5,13 +5,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,7 +49,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class LibraryFragment extends AbsMainActivityFragment implements CabHolder, MainActivity.MainActivityFragmentCallbacks, ViewPager.OnPageChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
-    public static final String TAG = LibraryFragment.class.getSimpleName();
 
     private Unbinder unbinder;
 
@@ -90,7 +89,7 @@ public class LibraryFragment extends AbsMainActivityFragment implements CabHolde
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         PreferenceUtil.getInstance(getActivity()).registerOnSharedPreferenceChangedListener(this);
-        setStatusbarColorAuto(view);
+        getMainActivity().setStatusbarColorAuto();
         getMainActivity().setNavigationbarColorAuto();
         getMainActivity().setTaskDescriptionColorAuto();
 
@@ -137,13 +136,13 @@ public class LibraryFragment extends AbsMainActivityFragment implements CabHolde
         tabs.setSelectedTabIndicatorColor(ThemeStore.accentColor(getActivity()));
 
         updateTabVisibility();
-        
+
         if (PreferenceUtil.getInstance(getContext()).rememberLastTab()) {
             pager.setCurrentItem(PreferenceUtil.getInstance(getContext()).getLastPage());
         }
         pager.addOnPageChangeListener(this);
     }
-    
+
     private void updateTabVisibility() {
         // hide the tab bar when only a single tab is visible
         tabs.setVisibility(pagerAdapter.getCount() == 1 ? View.GONE : View.VISIBLE);

@@ -3,10 +3,10 @@ package com.kabouzeid.gramophone.adapter;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.os.Build;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,16 +44,14 @@ import java.util.List;
  */
 public class PlaylistAdapter extends AbsMultiSelectAdapter<PlaylistAdapter.ViewHolder, Playlist> {
 
-    public static final String TAG = PlaylistAdapter.class.getSimpleName();
-
     private static final int SMART_PLAYLIST = 0;
     private static final int DEFAULT_PLAYLIST = 1;
 
     protected final AppCompatActivity activity;
-    protected ArrayList<Playlist> dataSet;
+    protected List<Playlist> dataSet;
     protected int itemLayoutRes;
 
-    public PlaylistAdapter(AppCompatActivity activity, ArrayList<Playlist> dataSet, @LayoutRes int itemLayoutRes, @Nullable CabHolder cabHolder) {
+    public PlaylistAdapter(AppCompatActivity activity, List<Playlist> dataSet, @LayoutRes int itemLayoutRes, @Nullable CabHolder cabHolder) {
         super(activity, cabHolder, R.menu.menu_playlists_selection);
         this.activity = activity;
         this.dataSet = dataSet;
@@ -61,11 +59,11 @@ public class PlaylistAdapter extends AbsMultiSelectAdapter<PlaylistAdapter.ViewH
         setHasStableIds(true);
     }
 
-    public ArrayList<Playlist> getDataSet() {
+    public List<Playlist> getDataSet() {
         return dataSet;
     }
 
-    public void swapDataSet(ArrayList<Playlist> dataSet) {
+    public void swapDataSet(List<Playlist> dataSet) {
         this.dataSet = dataSet;
         notifyDataSetChanged();
     }
@@ -75,9 +73,9 @@ public class PlaylistAdapter extends AbsMultiSelectAdapter<PlaylistAdapter.ViewH
         return dataSet.get(position).id;
     }
 
-    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(activity).inflate(itemLayoutRes, parent, false);
         return createViewHolder(view, viewType);
     }
@@ -139,7 +137,7 @@ public class PlaylistAdapter extends AbsMultiSelectAdapter<PlaylistAdapter.ViewH
     }
 
     @Override
-    protected void onMultipleItemAction(@NonNull MenuItem menuItem, @NonNull ArrayList<Playlist> selection) {
+    protected void onMultipleItemAction(@NonNull MenuItem menuItem, @NonNull List<Playlist> selection) {
         switch (menuItem.getItemId()) {
             case R.id.action_delete_playlist:
                 for (int i = 0; i < selection.size(); i++) {
@@ -168,13 +166,13 @@ public class PlaylistAdapter extends AbsMultiSelectAdapter<PlaylistAdapter.ViewH
         }
     }
 
-    private static class SavePlaylistsAsyncTask extends WeakContextAsyncTask<ArrayList<Playlist>, String, String> {
+    private static class SavePlaylistsAsyncTask extends WeakContextAsyncTask<List<Playlist>, String, String> {
         public SavePlaylistsAsyncTask(Context context) {
             super(context);
         }
 
         @Override
-        protected String doInBackground(ArrayList<Playlist>... params) {
+        protected String doInBackground(List<Playlist>... params) {
             int successes = 0;
             int failures = 0;
 
@@ -206,8 +204,8 @@ public class PlaylistAdapter extends AbsMultiSelectAdapter<PlaylistAdapter.ViewH
     }
 
     @NonNull
-    private ArrayList<Song> getSongList(@NonNull List<Playlist> playlists) {
-        final ArrayList<Song> songs = new ArrayList<>();
+    private List<Song> getSongList(@NonNull List<Playlist> playlists) {
+        final List<Song> songs = new ArrayList<>();
         for (Playlist playlist : playlists) {
             if (playlist instanceof AbsCustomPlaylist) {
                 songs.addAll(((AbsCustomPlaylist) playlist).getSongs(activity));
